@@ -41,7 +41,7 @@ public abstract class CardDisplay implements TypedInteractionCallback {
 		BlockBounds bounds = region.getBounds();
 		BlockPos size = bounds.size();
 
-		int rotation = region.getData() == null ? 0 : region.getData().getInt(LastCardRegions.ROTATION_KEY) % 4;
+		int rotation = region.getData() == null ? 0 : region.getData().getInt(LastCardRegions.ROTATION_KEY, 0) % 4;
 
 		int x = size.getX() + 1;
 		int z = size.getZ() + 1;

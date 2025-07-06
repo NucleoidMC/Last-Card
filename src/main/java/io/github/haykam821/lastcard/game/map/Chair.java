@@ -47,7 +47,7 @@ public class Chair extends Spawn {
 
 	@Override
 	public void teleport(ServerPlayerEntity player) {
-		ServerWorld world = player.getServerWorld();
+		ServerWorld world = player.getWorld();
 		if (this.mount == null) {
 			this.mount = this.createMount(world);
 		}

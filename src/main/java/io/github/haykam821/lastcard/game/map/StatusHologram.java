@@ -9,7 +9,7 @@ import eu.pb4.polymer.virtualentity.api.elements.ItemDisplayElement;
 import eu.pb4.polymer.virtualentity.api.elements.TextDisplayElement;
 import io.github.haykam821.lastcard.game.player.AbstractPlayerEntry;
 import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
-import net.minecraft.item.ModelTransformationMode;
+import net.minecraft.item.ItemDisplayContext;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
@@ -76,7 +76,7 @@ public final class StatusHologram {
 		ItemDisplayElement element = new ItemDisplayElement();
 
 		applyElementAttributes(element);
-		element.setModelTransformation(ModelTransformationMode.GROUND);
+		element.setItemDisplayContext(ItemDisplayContext.GROUND);
 		element.setLeftRotation(RotationAxis.POSITIVE_Y.rotation(MathHelper.PI));
 
 		return element;

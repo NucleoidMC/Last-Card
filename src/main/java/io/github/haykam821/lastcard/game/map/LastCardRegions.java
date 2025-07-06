@@ -21,7 +21,7 @@ public final class LastCardRegions {
 	protected static TemplateRegion getRegion(MapTemplate template, String marker, int index) {
 		return template.getMetadata().getRegions(marker)
 			.filter(region -> {
-				return region.getData() != null && index == region.getData().getInt(INDEX_KEY);
+				return region.getData() != null && index == region.getData().getInt(INDEX_KEY, 0);
 			})
 			.findAny()
 			.orElseThrow(() -> {
@@ -34,7 +34,7 @@ public final class LastCardRegions {
 			return 0;
 		}
 
-		return region.getData().getFloat(ROTATION_KEY);
+		return region.getData().getFloat(ROTATION_KEY, 0);
 	}
 
 	protected static int getTurnOrder(TemplateRegion region) {
@@ -42,6 +42,6 @@ public final class LastCardRegions {
 			return 0;
 		}
 
-		return region.getData().getInt(TURN_ORDER_KEY);
+		return region.getData().getInt(TURN_ORDER_KEY, 0);
 	}
 }

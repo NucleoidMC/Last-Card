@@ -20,7 +20,7 @@ public class Spawn {
 	}
 
 	public void teleport(ServerPlayerEntity player) {
-		player.teleport(player.getServerWorld(), this.pos.getX(), this.pos.getY(), this.pos.getZ(), Set.of(), this.rotation, 0, true);
+		player.teleport(player.getWorld(), this.pos.getX(), this.pos.getY(), this.pos.getZ(), Set.of(), this.rotation, 0, true);
 	}
 
 	public JoinAcceptorResult.Teleport acceptPlayers(JoinAcceptor acceptor, ServerWorld world, GameMode gameMode) {
