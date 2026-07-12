@@ -9,9 +9,9 @@ import io.github.haykam821.lastcard.card.color.CardColor;
 import io.github.haykam821.lastcard.card.color.ColorRepresentation;
 import io.github.haykam821.lastcard.card.color.ColorSelector;
 import io.github.haykam821.lastcard.game.player.AbstractPlayerEntry;
-import net.minecraft.screen.ScreenTexts;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
 
 public abstract class Card {
 	private final ColorSelector selector;
@@ -20,14 +20,14 @@ public abstract class Card {
 		this.selector = Objects.requireNonNull(selector);
 	}
 
-	public abstract Text getName();
+	public abstract Component getName();
 
-	public final Text getFullName() {
-		return Text.empty()
+	public final Component getFullName() {
+		return Component.empty()
 			.append(this.selector.getName())
-			.append(ScreenTexts.SPACE)
+			.append(CommonComponents.SPACE)
 			.append(this.getName())
-			.formatted(this.selector.getFormatting());
+			.withStyle(this.selector.getFormatting());
 	}
 
 	public final boolean canPlay(AbstractPlayerEntry player) {
@@ -65,11 +65,11 @@ public abstract class Card {
 
 	public abstract void renderOverlay(DrawableCanvas canvas, CanvasColor textColor);
 
-	private Text getCardPlayedMessage(AbstractPlayerEntry player) {
-		return Text.translatable("text.lastcard.card_played", player.getName(), this.getFullName()).formatted(Formatting.GOLD);
+	private Component getCardPlayedMessage(AbstractPlayerEntry player) {
+		return Component.translatable("text.lastcard.card_played", player.getName(), this.getFullName()).withStyle(ChatFormatting.GOLD);
 	}
 
-	private Text getCardPlayedYouMessage() {
-		return Text.translatable("text.lastcard.card_played.you", this.getFullName()).formatted(Formatting.GOLD);
+	private Component getCardPlayedYouMessage() {
+		return Component.translatable("text.lastcard.card_played.you", this.getFullName()).withStyle(ChatFormatting.GOLD);
 	}
 }

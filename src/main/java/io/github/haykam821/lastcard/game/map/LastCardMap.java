@@ -3,20 +3,20 @@ package io.github.haykam821.lastcard.game.map;
 import java.util.List;
 
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Util;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.gen.chunk.ChunkGenerator;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import xyz.nucleoid.map_templates.MapTemplate;
 import xyz.nucleoid.map_templates.TemplateRegion;
-import xyz.nucleoid.plasmid.api.game.world.generator.TemplateChunkGenerator;
+import xyz.nucleoid.plasmid.api.game.level.generator.TemplateChunkGenerator;
 
 public class LastCardMap {
-	private static final Random RANDOM = Random.createLocal();
+	private static final RandomSource RANDOM = RandomSource.createThreadLocalInstance();
 
 	private final MapTemplate template;
-	private final Box box;
+	private final AABB box;
 
 	private final List<Spawn> waitingSpawns;
 	private final TemplateRegion pileCardDisplay;
@@ -40,8 +40,8 @@ public class LastCardMap {
 		}
 	}
 
-	public boolean contains(ServerPlayerEntity player) {
-		return this.box.contains(player.getPos());
+	public boolean contains(ServerPlayer player) {
+		return this.box.contains(player.position());
 	}
 
 	public Spawn getWaitingSpawn() {

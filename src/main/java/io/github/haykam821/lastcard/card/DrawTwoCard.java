@@ -3,7 +3,7 @@ package io.github.haykam821.lastcard.card;
 import eu.pb4.mapcanvas.api.core.DrawableCanvas;
 import io.github.haykam821.lastcard.card.color.ColorSelector;
 import io.github.haykam821.lastcard.card.display.CardTemplates;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 public class DrawTwoCard extends DrawCard {
 	public DrawTwoCard(ColorSelector selector) {
@@ -11,8 +11,8 @@ public class DrawTwoCard extends DrawCard {
 	}
 
 	@Override
-	public Text getName() {
-		return Text.translatable("text.lastcard.card.draw_two");
+	public Component getName() {
+		return Component.translatable("text.lastcard.card.draw_two");
 	}
 
 	@Override

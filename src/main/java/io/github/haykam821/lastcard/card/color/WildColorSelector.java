@@ -5,11 +5,11 @@ import java.util.List;
 import eu.pb4.mapcanvas.api.core.CanvasColor;
 import eu.pb4.mapcanvas.api.core.DrawableCanvas;
 import io.github.haykam821.lastcard.card.display.CardTemplates;
-import net.minecraft.entity.boss.BossBar;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.world.BossEvent;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
 
 public class WildColorSelector implements ColorSelector {
 	protected static final ColorSelector INSTANCE = new WildColorSelector();
@@ -43,23 +43,23 @@ public class WildColorSelector implements ColorSelector {
 	}
 
 	@Override
-	public Text getName() {
-		return Text.translatable("text.lastcard.card.color.selector.wild");
+	public Component getName() {
+		return Component.translatable("text.lastcard.card.color.selector.wild");
 	}
 
 	@Override
 	public Item getItem() {
-		return Items.WHITE_WOOL;
+		return Items.WOOL.white();
 	}
 
 	@Override
-	public Formatting getFormatting() {
-		return Formatting.WHITE;
+	public ChatFormatting getFormatting() {
+		return ChatFormatting.WHITE;
 	}
 
 	@Override
-	public BossBar.Color getBossBarColor() {
-		return BossBar.Color.WHITE;
+	public BossEvent.BossBarColor getBossBarColor() {
+		return BossEvent.BossBarColor.WHITE;
 	}
 
 	@Override

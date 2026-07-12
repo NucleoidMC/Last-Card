@@ -2,19 +2,19 @@ package io.github.haykam821.lastcard.card.color;
 
 import eu.pb4.mapcanvas.api.core.CanvasColor;
 import eu.pb4.mapcanvas.api.core.DrawableCanvas;
-import net.minecraft.entity.boss.BossBar;
-import net.minecraft.item.Item;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.world.BossEvent;
+import net.minecraft.world.item.Item;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
 
 public interface ColorRepresentation {
-	public Text getName();
+	public Component getName();
 
 	public Item getItem();
 
-	public Formatting getFormatting();
+	public ChatFormatting getFormatting();
 
-	public BossBar.Color getBossBarColor();
+	public BossEvent.BossBarColor getBossBarColor();
 
 	public DrawableCanvas getTemplate();
 

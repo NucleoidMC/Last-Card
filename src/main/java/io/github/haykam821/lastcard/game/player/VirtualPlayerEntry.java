@@ -5,16 +5,16 @@ import org.apache.commons.lang3.RandomStringUtils;
 import io.github.haykam821.lastcard.game.phase.LastCardActivePhase;
 import io.github.haykam821.lastcard.turn.action.TurnAction;
 import io.github.haykam821.lastcard.turn.action.VirtualTurnAction;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
 import xyz.nucleoid.map_templates.TemplateRegion;
 
 public class VirtualPlayerEntry extends AbstractPlayerEntry {
 	private final String key = RandomStringUtils.randomAlphabetic(6);
-	private final Text name = Text.literal(this.key).formatted(Formatting.GRAY);
+	private final Component name = Component.literal(this.key).withStyle(ChatFormatting.GRAY);
 
 	public VirtualPlayerEntry(LastCardActivePhase phase, TemplateRegion chair, TemplateRegion publicDisplay) {
 		super(phase, chair, publicDisplay);
@@ -26,12 +26,12 @@ public class VirtualPlayerEntry extends AbstractPlayerEntry {
 	}
 
 	@Override
-	public Text getName() {
+	public Component getName() {
 		return this.name;
 	}
 
 	@Override
-	public ServerPlayerEntity getPlayer() {
+	public ServerPlayer getPlayer() {
 		return null;
 	}
 

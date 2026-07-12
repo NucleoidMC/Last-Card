@@ -6,16 +6,16 @@ import io.github.haykam821.lastcard.game.phase.LastCardActivePhase;
 import io.github.haykam821.lastcard.game.player.AbstractPlayerEntry;
 import io.github.haykam821.lastcard.turn.action.TurnAction;
 import net.minecraft.SharedConstants;
-import net.minecraft.particle.ParticleEffect;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.phys.Vec3;
 
 public class TurnManager {
 	private static final double PARTICLE_RADIUS = 1.5d;
 	public static final float PARTICLE_SIZE = 0.8f;
 
 	public static final int BLACK_PARTICLE_COLOR = 0x000000;
-	public static final ParticleEffect NO_COLOR_PARTICLE = CardColor.createParticleEffect(0xDDDDDD);
+	public static final ParticleOptions NO_COLOR_PARTICLE = CardColor.createParticleEffect(0xDDDDDD);
 
 	private static final double PARTICLE_SPEED = 1 / 15d;
 	private static final int PARTICLE_UPDATE_RATE = 1;
@@ -32,10 +32,10 @@ public class TurnManager {
 	private TurnDirection direction = TurnDirection.CLOCKWISE;
 	private int turnTicks = 0;
 
-	private final Vec3d particleOrigin;
+	private final Vec3 particleOrigin;
 	private int ticks = 0;
 
-	public TurnManager(LastCardActivePhase phase, Vec3d particleOrigin, CardDisplay privatePileDisplay, CardDisplay publicPileDisplay) {
+	public TurnManager(LastCardActivePhase phase, Vec3 particleOrigin, CardDisplay privatePileDisplay, CardDisplay publicPileDisplay) {
 		this.phase = phase;
 		this.particleOrigin = particleOrigin;
 
@@ -126,20 +126,20 @@ public class TurnManager {
 		this.ticks += this.direction.multiply(-1);
 
 		if (this.ticks % PARTICLE_UPDATE_RATE == 0) {
-			double x = this.particleOrigin.getX();
-			double y = this.particleOrigin.getY();
-			double z = this.particleOrigin.getZ();
+			double x = this.particleOrigin.x();
+			double y = this.particleOrigin.y();
+			double z = this.particleOrigin.z();
 
 			double deltaX = Math.sin(this.ticks * PARTICLE_SPEED) * PARTICLE_RADIUS;
 			double deltaZ = Math.cos(this.ticks * PARTICLE_SPEED) * PARTICLE_RADIUS;
 
 			CardColor color = this.phase.getDeck().getPreviousColor();
-			ParticleEffect particle = color == null ? NO_COLOR_PARTICLE : color.getParticle();
+			ParticleOptions particle = color == null ? NO_COLOR_PARTICLE : color.getParticle();
 
-			ServerWorld world = this.phase.getWorld();
+			ServerLevel world = this.phase.getLevel();
 
-			world.spawnParticles(particle, x + deltaX, y, z + deltaZ, 1, 0, 0, 0, 0);
-			world.spawnParticles(particle, x - deltaX, y, z - deltaZ, 1, 0, 0, 0, 0);
+			world.sendParticles(particle, x + deltaX, y, z + deltaZ, 1, 0, 0, 0, 0);
+			world.sendParticles(particle, x - deltaX, y, z - deltaZ, 1, 0, 0, 0, 0);
 		}
 	}
 

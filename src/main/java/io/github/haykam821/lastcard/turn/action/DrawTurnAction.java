@@ -2,7 +2,7 @@ package io.github.haykam821.lastcard.turn.action;
 
 import io.github.haykam821.lastcard.game.phase.LastCardActivePhase;
 import io.github.haykam821.lastcard.game.player.AbstractPlayerEntry;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 public class DrawTurnAction implements TurnAction {
 	private final int value;
@@ -24,8 +24,8 @@ public class DrawTurnAction implements TurnAction {
 	}
 
 	private void sendDrawMessage(LastCardActivePhase phase, AbstractPlayerEntry player) {
-		Text cardDrewMessage = player.getCardDrewMessage(this.value);
-		Text cardDrewManyYouMessage = player.getCardDrewManyYouMessage(this.value);
+		Component cardDrewMessage = player.getCardDrewMessage(this.value);
+		Component cardDrewManyYouMessage = player.getCardDrewManyYouMessage(this.value);
 
 		phase.sendMessageWithException(cardDrewMessage, player, cardDrewManyYouMessage);
 	}

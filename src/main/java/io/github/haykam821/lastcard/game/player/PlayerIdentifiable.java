@@ -1,23 +1,23 @@
 package io.github.haykam821.lastcard.game.player;
 
 import io.github.haykam821.lastcard.card.Card;
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.ScreenTexts;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
 
 public abstract class PlayerIdentifiable {
 	// Display
-	public abstract Text getName();
+	public abstract Component getName();
 
 	public abstract ItemStack createHeadStack();
 
-	public final Text getHologramText() {
-		return Text.empty()
+	public final Component getHologramText() {
+		return Component.empty()
 			.append(this.getTurnName())
-			.append(ScreenTexts.LINE_BREAK)
+			.append(CommonComponents.NEW_LINE)
 			.append(this.getCardStatus());
 	}
 
@@ -27,52 +27,52 @@ public abstract class PlayerIdentifiable {
 	public abstract int getCardCount();
 
 	// Player entity
-	public abstract ServerPlayerEntity getPlayer();
+	public abstract ServerPlayer getPlayer();
 
-	public final boolean isPlayer(ServerPlayerEntity player) {
+	public final boolean isPlayer(ServerPlayer player) {
 		return player != null && player == this.getPlayer();
 	}
 
 	// Messages
-	public final Text getWinMessage() {
-		return Text.translatable("text.lastcard.win", this.getName()).formatted(Formatting.GOLD);
+	public final Component getWinMessage() {
+		return Component.translatable("text.lastcard.win", this.getName()).withStyle(ChatFormatting.GOLD);
 	}
 
-	public final Text getNextTurnMessage() {
-		return Text.translatable("text.lastcard.turn.next", this.getName()).formatted(Formatting.GOLD);
+	public final Component getNextTurnMessage() {
+		return Component.translatable("text.lastcard.turn.next", this.getName()).withStyle(ChatFormatting.GOLD);
 	}
 
-	protected final Text getTurnName() {
-		Text name = this.getName().copy().formatted(Formatting.BOLD);
-		return this.hasTurn() ? Text.translatable("text.lastcard.status.player_turn", name).formatted(Formatting.AQUA) : name;
+	protected final Component getTurnName() {
+		Component name = this.getName().copy().withStyle(ChatFormatting.BOLD);
+		return this.hasTurn() ? Component.translatable("text.lastcard.status.player_turn", name).withStyle(ChatFormatting.AQUA) : name;
 	}
 
-	protected final Text getCardStatus() {
+	protected final Component getCardStatus() {
 		int cards = this.getCardCount();
 		String key = "text.lastcard.status.cards" + (cards == 1 ? ".single" : "");
 
-		return Text.translatable(key, cards);
+		return Component.translatable(key, cards);
 	}
 
-	public final Text getCardDrewMessage(int count) {
-		MutableText text;
+	public final Component getCardDrewMessage(int count) {
+		MutableComponent text;
 
 		if (count == 1) {
-			text = Text.translatable("text.lastcard.card_drew", this.getName());
+			text = Component.translatable("text.lastcard.card_drew", this.getName());
 		} else if (count > 1) {
-			text = Text.translatable("text.lastcard.card_drew.many", this.getName(), count);
+			text = Component.translatable("text.lastcard.card_drew.many", this.getName(), count);
 		} else {
 			throw new IllegalStateException("Cannot get negative card drew message");
 		}
 
-		return text.formatted(Formatting.GOLD);
+		return text.withStyle(ChatFormatting.GOLD);
 	}
 
-	protected final Text getCardDrewYouMessage(Card card) {
-		return Text.translatable("text.lastcard.card_drew.you", card.getFullName()).formatted(Formatting.GOLD);
+	protected final Component getCardDrewYouMessage(Card card) {
+		return Component.translatable("text.lastcard.card_drew.you", card.getFullName()).withStyle(ChatFormatting.GOLD);
 	}
 
-	public final Text getCardDrewManyYouMessage(int count) {
-		return Text.translatable("text.lastcard.card_drew.many.you", count).formatted(Formatting.GOLD);
+	public final Component getCardDrewManyYouMessage(int count) {
+		return Component.translatable("text.lastcard.card_drew.many.you", count).withStyle(ChatFormatting.GOLD);
 	}
 }

@@ -9,7 +9,6 @@ import eu.pb4.mapcanvas.api.core.DrawableCanvas;
 import eu.pb4.mapcanvas.api.core.PlayerCanvas;
 import eu.pb4.mapcanvas.api.utils.CanvasUtils;
 import eu.pb4.mapcanvas.api.utils.VirtualDisplay;
-import eu.pb4.mapcanvas.api.utils.VirtualDisplay.TypedInteractionCallback;
 import io.github.haykam821.lastcard.card.Card;
 import io.github.haykam821.lastcard.card.color.CardColor;
 import io.github.haykam821.lastcard.card.display.layout.CardLayout;
@@ -19,15 +18,14 @@ import io.github.haykam821.lastcard.card.display.region.CardRegion;
 import io.github.haykam821.lastcard.game.map.LastCardRegions;
 import io.github.haykam821.lastcard.game.phase.PlayerEntryGetter;
 import io.github.haykam821.lastcard.game.player.AbstractPlayerEntry;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.BlockRotation;
-import net.minecraft.util.ClickType;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.block.Rotation;
 import xyz.nucleoid.map_templates.BlockBounds;
 import xyz.nucleoid.map_templates.TemplateRegion;
 
-public abstract class CardDisplay implements TypedInteractionCallback {
+public abstract class CardDisplay implements VirtualDisplay.DisplayInteractionCallback {
 	protected final PlayerEntryGetter entryGetter;
 
 	private final Map<CardRenderData, DrawableCanvas> canvasCache = new HashMap<>();
@@ -41,17 +39,16 @@ public abstract class CardDisplay implements TypedInteractionCallback {
 		BlockBounds bounds = region.getBounds();
 		BlockPos size = bounds.size();
 
-		int rotation = region.getData() == null ? 0 : region.getData().getInt(LastCardRegions.ROTATION_KEY) % 4;
+		int rotation = region.getData() == null ? 0 : region.getData().getIntOr(LastCardRegions.ROTATION_KEY, 0) % 4;
 
 		int x = size.getX() + 1;
 		int z = size.getZ() + 1;
 
 		PlayerCanvas canvas = rotation % 2 == 0 ? DrawableCanvas.create(x, z) : DrawableCanvas.create(z, x);
 		BlockPos pos = CardDisplay.getDisplayPos(rotation, bounds);
-
 		this.display = VirtualDisplay.builder(canvas, pos, Direction.UP)
-			.rotation(BlockRotation.values()[rotation])
-			.callback(this)
+			.rotation(Rotation.values()[rotation])
+			.interactionCallback(this)
 			.invisible()
 			.build();
 	}
@@ -84,7 +81,7 @@ public abstract class CardDisplay implements TypedInteractionCallback {
 	}
 
 	@Override
-	public void onClick(ServerPlayerEntity player, ClickType type, int x, int y) {
+	public void onClick(ServerPlayer player, VirtualDisplay.ClickType type, int x, int y) {
 		AbstractPlayerEntry entry = this.entryGetter.getPlayerEntry(player);
 
 		if (entry != null) {
@@ -105,17 +102,17 @@ public abstract class CardDisplay implements TypedInteractionCallback {
 		return this.display.getCanvas();
 	}
 
-	public final void add(ServerPlayerEntity viewer) {
+	public final void add(ServerPlayer viewer) {
 		this.display.addPlayer(viewer);
 		this.getCanvas().addPlayer(viewer);
 	}
 
-	public final void remove(ServerPlayerEntity viewer) {
+	public final void remove(ServerPlayer viewer) {
 		this.display.removePlayer(viewer);
 		this.getCanvas().removePlayer(viewer);
 	}
 
-	public void moveViewer(ServerPlayerEntity player, CardDisplay toDisplay) {
+	public void moveViewer(ServerPlayer player, CardDisplay toDisplay) {
 		if (player != null) {
 			this.remove(player);
 			toDisplay.add(player);

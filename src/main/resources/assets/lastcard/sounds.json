@@ -1,0 +1,19 @@
+{
+  "draw_card": {
+      "sounds": [
+        "lastcard:draw_card",
+        "lastcard:draw_card_2",
+        "lastcard:draw_card_3"
+      ]
+  },
+  "play_card": {
+    "sounds": [
+      "lastcard:play_card"
+    ]
+  },
+  "turn_skipped": {
+    "sounds": [
+      "lastcard:turn_skipped"
+    ]
+  }
+}

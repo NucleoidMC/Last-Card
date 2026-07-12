@@ -6,7 +6,7 @@ import io.github.haykam821.lastcard.card.color.ColorSelector;
 import io.github.haykam821.lastcard.card.display.CardTemplates;
 import io.github.haykam821.lastcard.game.player.AbstractPlayerEntry;
 import io.github.haykam821.lastcard.turn.action.SkipTurnAction;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 public class SkipCard extends SymbolCard {
 	public SkipCard(ColorSelector selector) {
@@ -14,8 +14,8 @@ public class SkipCard extends SymbolCard {
 	}
 
 	@Override
-	public Text getName() {
-		return Text.translatable("text.lastcard.card.skip");
+	public Component getName() {
+		return Component.translatable("text.lastcard.card.skip");
 	}
 
 	@Override

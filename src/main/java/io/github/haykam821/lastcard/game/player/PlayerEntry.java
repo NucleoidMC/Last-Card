@@ -3,19 +3,20 @@ package io.github.haykam821.lastcard.game.player;
 import io.github.haykam821.lastcard.card.display.CardDisplay;
 import io.github.haykam821.lastcard.card.display.player.PrivateCardDisplay;
 import io.github.haykam821.lastcard.game.phase.LastCardActivePhase;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.ProfileComponent;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.component.ResolvableProfile;
+import net.minecraft.world.entity.ai.Brain;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.chat.Component;
 import xyz.nucleoid.map_templates.TemplateRegion;
 
 public class PlayerEntry extends AbstractPlayerEntry {
-	private final ServerPlayerEntity player;
+	private final ServerPlayer player;
 	private final CardDisplay privateDisplay;
 
-	public PlayerEntry(LastCardActivePhase phase, ServerPlayerEntity player, TemplateRegion chair, TemplateRegion privateDisplay, TemplateRegion publicDisplay) {
+	public PlayerEntry(LastCardActivePhase phase, ServerPlayer player, TemplateRegion chair, TemplateRegion privateDisplay, TemplateRegion publicDisplay) {
 		super(phase, chair, publicDisplay);
 
 		this.player = player;
@@ -28,17 +29,17 @@ public class PlayerEntry extends AbstractPlayerEntry {
 	}
 
 	@Override
-	public Text getName() {
+	public Component getName() {
 		return this.player.getDisplayName();
 	}
 
 	@Override
-	public ServerPlayerEntity getPlayer() {
+	public ServerPlayer getPlayer() {
 		return this.player;
 	}
 
 	@Override
-	protected CardDisplay getDisplayViewableBy(ServerPlayerEntity viewer) {
+	protected CardDisplay getDisplayViewableBy(ServerPlayer viewer) {
 		return this.isPlayer(viewer) ? this.privateDisplay : super.getDisplayViewableBy(viewer);
 	}
 
@@ -51,9 +52,8 @@ public class PlayerEntry extends AbstractPlayerEntry {
 	@Override
 	public ItemStack createHeadStack() {
 		ItemStack stack = new ItemStack(Items.PLAYER_HEAD);
-
-		ProfileComponent component = new ProfileComponent(this.player.getGameProfile());
-		stack.set(DataComponentTypes.PROFILE, component);
+		ResolvableProfile component = ResolvableProfile.createResolved(this.player.getGameProfile());
+		stack.set(DataComponents.PROFILE, component);
 
 		return stack;
 	}

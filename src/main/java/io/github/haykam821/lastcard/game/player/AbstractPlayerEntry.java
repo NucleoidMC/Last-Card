@@ -11,8 +11,14 @@ import io.github.haykam821.lastcard.game.map.Chair;
 import io.github.haykam821.lastcard.game.map.StatusHologram;
 import io.github.haykam821.lastcard.game.phase.LastCardActivePhase;
 import io.github.haykam821.lastcard.turn.action.TurnAction;
-import net.minecraft.server.network.ServerPlayerEntity;
+import io.github.haykam821.lastcard.util.PlaySound;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import xyz.nucleoid.map_templates.TemplateRegion;
+
+import static io.github.haykam821.lastcard.util.PlaySound.DRAW_CARD_ID;
+import static io.github.haykam821.lastcard.util.PlaySound.PLAY_CARD_ID;
 
 public abstract class AbstractPlayerEntry extends PlayerIdentifiable {
 	private final LastCardActivePhase phase;
@@ -27,7 +33,7 @@ public abstract class AbstractPlayerEntry extends PlayerIdentifiable {
 	public AbstractPlayerEntry(LastCardActivePhase phase, TemplateRegion chair, TemplateRegion publicDisplay) {
 		this.phase = phase;
 
-		int initialHandCount = phase.getConfig().getInitialHandCount().get(phase.getWorld().getRandom());
+		int initialHandCount = phase.getConfig().getInitialHandCount().sample(phase.getLevel().getRandom());
 		this.cards = new ArrayList<>(initialHandCount);
 
 		for (int index = 0; index < initialHandCount; index++) {
@@ -72,7 +78,9 @@ public abstract class AbstractPlayerEntry extends PlayerIdentifiable {
 		if (card.canPlay(this)) {
 			this.discardCard(card, color);
 			card.play(this);
-
+			for (AbstractPlayerEntry player : this.phase.getPlayers()) {
+				PlaySound.playSound(player.getPlayer(), SoundEvent.createVariableRangeEvent(PLAY_CARD_ID), SoundSource.PLAYERS, 1, 1);
+			}
 			if (this.cards.isEmpty()) {
 				this.updateDisplays();
 				this.phase.updatePileDisplay();
@@ -110,7 +118,9 @@ public abstract class AbstractPlayerEntry extends PlayerIdentifiable {
 
 		this.cards.add(card);
 		this.markDirtyDisplays();
-
+		for (AbstractPlayerEntry player : this.phase.getPlayers()) {
+			PlaySound.playSound(player.getPlayer(), SoundEvent.createVariableRangeEvent(DRAW_CARD_ID), SoundSource.PLAYERS, 1, 1);
+		}
 		return card;
 	}
 
@@ -124,20 +134,20 @@ public abstract class AbstractPlayerEntry extends PlayerIdentifiable {
 	}
 
 	// Displays
-	protected CardDisplay getDisplayViewableBy(ServerPlayerEntity viewer) {
+	protected CardDisplay getDisplayViewableBy(ServerPlayer viewer) {
 		return this.publicDisplay;
 	}
 
-	public final void addDisplay(ServerPlayerEntity viewer) {
+	public final void addDisplay(ServerPlayer viewer) {
 		this.getDisplayViewableBy(viewer).add(viewer);
 	}
 
-	public final void removeDisplay(ServerPlayerEntity viewer) {
+	public final void removeDisplay(ServerPlayer viewer) {
 		this.getDisplayViewableBy(viewer).remove(viewer);
 	}
 
 	public void attachDisplays() {
-		this.statusHologram.attach(this.phase.getWorld(), this.chair.getStatusHologramPos());
+		this.statusHologram.attach(this.phase.getLevel(), this.chair.getStatusHologramPos());
 		this.updateDisplays();
 	}
 

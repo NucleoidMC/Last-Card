@@ -10,8 +10,8 @@ import javax.imageio.ImageIO;
 import eu.pb4.mapcanvas.api.core.CanvasImage;
 import eu.pb4.mapcanvas.api.core.DrawableCanvas;
 import io.github.haykam821.lastcard.Main;
-import net.minecraft.util.crash.CrashException;
-import net.minecraft.util.crash.CrashReport;
+import net.minecraft.ReportedException;
+import net.minecraft.CrashReport;
 
 public final class CardTemplates {
 	public static final DrawableCanvas RED_FRONT = CardTemplates.load("red_front");
@@ -43,9 +43,9 @@ public final class CardTemplates {
 			return CanvasImage.from(image);
 		} catch (Exception exception) {
 			CrashReport report = new CrashReport("Loading card template", exception);
-			report.addElement("Card template: " + id);
+			report.addCategory("Card template: " + id);
 
-			throw new CrashException(report);
+			throw new ReportedException(report);
 		}
 	}
 }

@@ -3,13 +3,13 @@ package io.github.haykam821.lastcard.mixin;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
-import net.minecraft.entity.decoration.InteractionEntity;
+import net.minecraft.world.entity.Interaction;
 
-@Mixin(InteractionEntity.class)
-public interface InteractionEntityAccessor {
-	@Invoker("setInteractionWidth")
+@Mixin(Interaction.class)
+public interface InteractionAccessor {
+	@Invoker("setWidth")
 	public void lastcard$setInteractionWidth(float width);
 
-	@Invoker("setInteractionHeight")
+	@Invoker("setHeight")
 	public void lastcard$setInteractionHeight(float height);
 }

@@ -7,7 +7,7 @@ import eu.pb4.mapcanvas.api.font.DefaultFonts;
 import io.github.haykam821.lastcard.card.color.CardColor;
 import io.github.haykam821.lastcard.card.color.ColorSelector;
 import io.github.haykam821.lastcard.card.display.layout.CardSpacing;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 public class NumberCard extends Card {
 	private static final CanvasFont FONT = DefaultFonts.VANILLA;
@@ -21,8 +21,8 @@ public class NumberCard extends Card {
 	}
 
 	@Override
-	public Text getName() {
-		return Text.translatable("text.lastcard.card.number", this.value);
+	public Component getName() {
+		return Component.translatable("text.lastcard.card.number", this.value);
 	}
 
 	@Override

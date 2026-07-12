@@ -6,10 +6,10 @@ import java.util.Objects;
 
 import eu.pb4.mapcanvas.api.core.CanvasColor;
 import eu.pb4.mapcanvas.api.core.DrawableCanvas;
-import net.minecraft.entity.boss.BossBar;
-import net.minecraft.item.Item;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.world.BossEvent;
+import net.minecraft.world.item.Item;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
 import net.minecraft.util.Util;
 
 public class SimpleColorSelector implements ColorSelector {
@@ -45,7 +45,7 @@ public class SimpleColorSelector implements ColorSelector {
 	}
 
 	@Override
-	public Text getName() {
+	public Component getName() {
 		return this.color.getName();
 	}
 
@@ -55,12 +55,12 @@ public class SimpleColorSelector implements ColorSelector {
 	}
 
 	@Override
-	public Formatting getFormatting() {
+	public ChatFormatting getFormatting() {
 		return this.color.getFormatting();
 	}
 
 	@Override
-	public BossBar.Color getBossBarColor() {
+	public BossEvent.BossBarColor getBossBarColor() {
 		return this.color.getBossBarColor();
 	}
 

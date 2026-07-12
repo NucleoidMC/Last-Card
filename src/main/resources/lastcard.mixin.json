@@ -3,7 +3,7 @@
 	"package": "io.github.haykam821.lastcard.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
-		"InteractionEntityAccessor",
+      "InteractionAccessor",
 		"WitherRoseBlockMixin"
 	],
 	"injectors": {

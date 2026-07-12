@@ -3,19 +3,16 @@ package io.github.haykam821.lastcard.game.map;
 import java.util.Comparator;
 
 import io.github.haykam821.lastcard.game.player.AbstractPlayerEntry;
-import io.github.haykam821.lastcard.mixin.InteractionEntityAccessor;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.StairsBlock;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.decoration.InteractionEntity;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.gen.stateprovider.BlockStateProvider;
+import io.github.haykam821.lastcard.mixin.InteractionAccessor;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 import xyz.nucleoid.map_templates.TemplateRegion;
 
 public class Chair extends Spawn {
@@ -35,7 +32,7 @@ public class Chair extends Spawn {
 	public Chair(TemplateRegion region, BlockStateProvider chairBlock) {
 		super(region);
 
-		this.blockPos = BlockPos.ofFloored(this.pos);
+		this.blockPos = BlockPos.containing(this.pos);
 		this.turnOrder = LastCardRegions.getTurnOrder(region);
 
 		this.chairBlock = chairBlock;
@@ -46,42 +43,42 @@ public class Chair extends Spawn {
 	}
 
 	@Override
-	public void teleport(ServerPlayerEntity player) {
-		ServerWorld world = player.getServerWorld();
+	public void teleport(ServerPlayer player) {
+		ServerLevel level = player.level();
 		if (this.mount == null) {
-			this.mount = this.createMount(world);
+			this.mount = this.createMount(level);
 		}
 
-		if (world.isAir(this.blockPos)) {
-			Direction facing = Direction.fromHorizontalDegrees(this.rotation).getOpposite();
-			BlockState state = this.chairBlock.get(world.getRandom(), this.blockPos).with(StairsBlock.FACING, facing);
+		if (level.isEmptyBlock(this.blockPos)) {
+			Direction facing = Direction.fromYRot(this.rotation).getOpposite();
+			BlockState state = this.chairBlock.getState(level, level.getRandom(), this.blockPos).setValue(StairBlock.FACING, facing);
 
-			world.setBlockState(this.blockPos, state);
+			level.setBlockAndUpdate(this.blockPos, state);
 		}
 
 		super.teleport(player);
-		player.startRiding(this.mount, true);
+		player.startRiding(this.mount, true, true);
 	}
 
-	private Entity createMount(ServerWorld world) {
-		InteractionEntity mount = EntityType.INTERACTION.create(world, SpawnReason.STRUCTURE);
-		InteractionEntityAccessor accessor = (InteractionEntityAccessor) mount;
+	private Entity createMount(ServerLevel level) {
+		Interaction mount = EntityTypes.INTERACTION.create(level, EntitySpawnReason.STRUCTURE);
+		InteractionAccessor accessor = (InteractionAccessor) mount;
 
 		accessor.lastcard$setInteractionWidth(0);
 		accessor.lastcard$setInteractionHeight(0);
 
-		mount.setPosition(this.pos.getX(), this.pos.getY() + MOUNT_Y_OFFSET, this.pos.getZ());
-		mount.setYaw(this.rotation);
+		mount.setPos(this.pos.x(), this.pos.y() + MOUNT_Y_OFFSET, this.pos.z());
+		mount.setYRot(this.rotation);
 
 		mount.setInvisible(true);
 		mount.setNoGravity(true);
 		mount.setSilent(true);
 
-		world.spawnEntity(mount);
+		level.addFreshEntity(mount);
 		return mount;
 	}
 
-	public Vec3d getStatusHologramPos() {
+	public Vec3 getStatusHologramPos() {
 		return this.pos.add(0, MOUNT_Y_OFFSET + 1.8, 0);
 	}
 }

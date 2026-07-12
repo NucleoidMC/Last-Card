@@ -1,20 +1,20 @@
 package io.github.haykam821.lastcard.turn;
 
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 public enum TurnDirection {
 	CLOCKWISE("clockwise", 1),
 	COUNTERCLOCKWISE("counterclockwise", -1);
 
-	private final Text name;
+	private final Component name;
 	private final int multiplier;
 
 	private TurnDirection(String key, int multiplier) {
-		this.name = Text.translatable("text.lastcard.turn.direction." + key);
+		this.name = Component.translatable("text.lastcard.turn.direction." + key);
 		this.multiplier = multiplier;
 	}
 
-	public Text getName() {
+	public Component getName() {
 		return this.name;
 	}
 

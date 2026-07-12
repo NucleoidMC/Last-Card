@@ -8,12 +8,12 @@ import eu.pb4.polymer.virtualentity.api.elements.DisplayElement;
 import eu.pb4.polymer.virtualentity.api.elements.ItemDisplayElement;
 import eu.pb4.polymer.virtualentity.api.elements.TextDisplayElement;
 import io.github.haykam821.lastcard.game.player.AbstractPlayerEntry;
-import net.minecraft.entity.decoration.DisplayEntity.BillboardMode;
-import net.minecraft.item.ModelTransformationMode;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RotationAxis;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.entity.Display.BillboardConstraints;
+import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
+import com.mojang.math.Axis;
+import net.minecraft.world.phys.Vec3;
 
 public final class StatusHologram {
 	private final AbstractPlayerEntry player;
@@ -44,8 +44,8 @@ public final class StatusHologram {
 		this.textElement.tick();
 	}
 
-	public void attach(ServerWorld world, Vec3d pos) {
-		Vec3d attachmentPos = pos.subtract(0, 0.12, 0);
+	public void attach(ServerLevel world, Vec3 pos) {
+		Vec3 attachmentPos = pos.subtract(0, 0.12, 0);
 
 		ChunkAttachment.of(this.headStackHolder, world, attachmentPos);
 		ChunkAttachment.of(this.textHolder, world, attachmentPos);
@@ -76,8 +76,8 @@ public final class StatusHologram {
 		ItemDisplayElement element = new ItemDisplayElement();
 
 		applyElementAttributes(element);
-		element.setModelTransformation(ModelTransformationMode.GROUND);
-		element.setLeftRotation(RotationAxis.POSITIVE_Y.rotation(MathHelper.PI));
+		element.setItemDisplayContext(ItemDisplayContext.GROUND);
+		element.setLeftRotation(Axis.YP.rotation(Mth.PI));
 
 		return element;
 	}
@@ -92,7 +92,7 @@ public final class StatusHologram {
 	}
 
 	private static <T extends DisplayElement> T applyElementAttributes(T element) {
-		element.setBillboardMode(BillboardMode.CENTER);
+		element.setBillboardMode(BillboardConstraints.CENTER);
 
 		element.setViewRange(0.3f);
 

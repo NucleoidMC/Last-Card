@@ -3,13 +3,13 @@ package io.github.haykam821.lastcard.game.phase;
 import io.github.haykam821.lastcard.game.LastCardConfig;
 import io.github.haykam821.lastcard.game.map.LastCardMap;
 import io.github.haykam821.lastcard.game.map.LastCardMapBuilder;
-import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.GameMode;
-import xyz.nucleoid.fantasy.RuntimeWorldConfig;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.GameType;
+import xyz.nucleoid.fantasy.RuntimeLevelConfig;
 import xyz.nucleoid.plasmid.api.game.GameOpenContext;
 import xyz.nucleoid.plasmid.api.game.GameOpenProcedure;
 import xyz.nucleoid.plasmid.api.game.GameResult;
@@ -27,14 +27,14 @@ import xyz.nucleoid.stimuli.event.player.PlayerDeathEvent;
 
 public class LastCardWaitingPhase implements GamePlayerEvents.Accept, GameActivityEvents.Tick, PlayerDamageEvent, PlayerDeathEvent, GameActivityEvents.RequestStart {
 	private final GameSpace gameSpace;
-	private final ServerWorld world;
+	private final ServerLevel level;
 
 	private final LastCardConfig config;
 	private final LastCardMap map;
 
-	public LastCardWaitingPhase(GameSpace gameSpace, ServerWorld world, LastCardConfig config, LastCardMap map) {
+	public LastCardWaitingPhase(GameSpace gameSpace, ServerLevel level, LastCardConfig config, LastCardMap map) {
 		this.gameSpace = gameSpace;
-		this.world = world;
+		this.level = level;
 
 		this.config = config;
 		this.map = map;
@@ -44,17 +44,17 @@ public class LastCardWaitingPhase implements GamePlayerEvents.Accept, GameActivi
 		LastCardConfig config = context.config();
 
 		MinecraftServer server = context.server();
-		Random random = server.getOverworld().getRandom();
+		RandomSource random = server.overworld().getRandom();
 
 		LastCardMapBuilder mapBuilder = new LastCardMapBuilder(config);
 		LastCardMap map = mapBuilder.create(server);
 
-		RuntimeWorldConfig worldConfig = new RuntimeWorldConfig()
-			.setTimeOfDay(config.getTimeOfDay().get(random))
+		RuntimeLevelConfig worldConfig = new RuntimeLevelConfig()
+			//.setTimeOfDay(config.getTimeOfDay().sample(random))
 			.setGenerator(map.createGenerator(server));
 
-		return context.openWithWorld(worldConfig, (activity, world) -> {
-			LastCardWaitingPhase phase = new LastCardWaitingPhase(activity.getGameSpace(), world, config, map);
+		return context.openWithLevel(worldConfig, (activity, level) -> {
+			LastCardWaitingPhase phase = new LastCardWaitingPhase(activity.getGameSpace(), level, config, map);
 			GameWaitingLobby.addTo(activity, config.getPlayerConfig());
 
 			LastCardActivePhase.setRules(activity);
@@ -72,12 +72,12 @@ public class LastCardWaitingPhase implements GamePlayerEvents.Accept, GameActivi
 
 	@Override
 	public JoinAcceptorResult onAcceptPlayers(JoinAcceptor acceptor) {
-		return this.map.getWaitingSpawn().acceptPlayers(acceptor, this.world, GameMode.ADVENTURE);
+		return this.map.getWaitingSpawn().acceptPlayers(acceptor, this.level, GameType.ADVENTURE);
 	}
 
 	@Override
 	public void onTick() {
-		for (ServerPlayerEntity player : this.gameSpace.getPlayers()) {
+		for (ServerPlayer player : this.gameSpace.getPlayers()) {
 			if (!this.map.contains(player)) {
 				this.spawn(player);
 			}
@@ -85,23 +85,23 @@ public class LastCardWaitingPhase implements GamePlayerEvents.Accept, GameActivi
 	}
 
 	@Override
-	public EventResult onDamage(ServerPlayerEntity player, DamageSource source, float amount) {
+	public EventResult onDamage(ServerPlayer player, DamageSource source, float amount) {
 		return EventResult.DENY;
 	}
 
 	@Override
-	public EventResult onDeath(ServerPlayerEntity player, DamageSource source) {
+	public EventResult onDeath(ServerPlayer player, DamageSource source) {
 		this.spawn(player);
 		return EventResult.DENY;
 	}
 
 	@Override
 	public GameResult onRequestStart() {
-		LastCardActivePhase.open(this.gameSpace, this.world, this.config, this.map);
+		LastCardActivePhase.open(this.gameSpace, this.level, this.config, this.map);
 		return GameResult.ok();
 	}
 
-	private void spawn(ServerPlayerEntity player) {
+	private void spawn(ServerPlayer player) {
 		this.map.getWaitingSpawn().teleport(player);
 	}
 }
