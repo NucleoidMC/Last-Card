@@ -4,10 +4,7 @@
 	"map": "lastcard:dark_oak_graveyard",
 	"time_of_day": 15000,
 	"chair_block": {
-		"type": "minecraft:simple_state_provider",
-		"state": {
-			"Name": "minecraft:cobblestone_stairs"
-		}
+		"id": "minecraft:cobblestone_stairs"
 	},
 	"players": {
 		"min": 1,

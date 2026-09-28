@@ -22,7 +22,7 @@ public class LastCardConfig {
 			IntProviders.NON_NEGATIVE_CODEC.optionalFieldOf("ticks_until_close", ConstantInt.of(SharedConstants.TICKS_PER_SECOND * 5)).forGetter(LastCardConfig::getTicksUntilClose),
 			IntProviders.POSITIVE_CODEC.optionalFieldOf("initial_hand_count", ConstantInt.of(7)).forGetter(LastCardConfig::getInitialHandCount),
 			IntProviders.POSITIVE_CODEC.optionalFieldOf("time_of_day", ConstantInt.of(6000)).forGetter(LastCardConfig::getTimeOfDay),
-			BlockStateProvider.CODEC.optionalFieldOf("chair_block", BlockStateProvider.simple(Blocks.DARK_OAK_STAIRS)).forGetter(LastCardConfig::getChairBlock)
+			BlockStateProvider.DIRECT_CODEC.optionalFieldOf("chair_block", BlockStateProvider.of(Blocks.DARK_OAK_STAIRS)).forGetter(LastCardConfig::getChairBlock)
 		).apply(instance, LastCardConfig::new);
 	});
 
